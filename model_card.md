@@ -61,29 +61,34 @@ Prompts:
 
 ## 6. Limitations and Bias 
 
-Where the system struggles or behaves unfairly. 
+## Limitations and Bias
 
-Prompts:  
-
-- Features it does not consider  
-- Genres or moods that are underrepresented  
-- Cases where the system overfits to one preference  
-- Ways the scoring might unintentionally favor some users  
-
+This system over-prioritizes genre matches because they're worth +2.0, double a mood match — so a strong genre match can outrank a song that's actually a much better overall vibe fit. With only 18 songs and just 3-4 pop tracks, "pop" profiles keep recommending the same 2 songs (Gym Hero, Sunrise City) regardless of mood or valence targets, since the genre bonus alone puts them near the top. The adversarial test made this concrete: a user wanting "sad" music still got upbeat pop recommended, because the scoring function has no way to recognize that high energy + low valence + sad mood is an internally consistent request — it just sums independent closeness scores.
 ---
 
 ## 7. Evaluation  
 
-How you checked whether the recommender behaved as expected. 
+## Evaluation
 
-Prompts:  
+I tested 4 profiles: High-Energy Pop, Chill Lofi, Deep Intense Rock, and an adversarial Energetic-Sad profile.
 
-- Which user profiles you tested  
-- What you looked for in the recommendations  
-- What surprised you  
-- Any simple tests or comparisons you ran  
+- **High-Energy Pop vs Chill Lofi:** Pop profile surfaces upbeat, danceable tracks (Sunrise City, Gym Hero); lofi profile shifts entirely to low-energy, high-acousticness tracks (Rainy Window, Library Rain) — makes sense since target_energy is nearly opposite (0.9 vs 0.3).
+- **Deep Intense Rock vs High-Energy Pop:** Both want high energy, but rock's low target_valence (0.4) correctly favors moodier/angrier tracks like Iron Horizon and Storm Runner instead of upbeat pop.
+- **Adversarial - Energetic Sad:** This profile exposed a limitation — the system recommended high-energy pop songs that aren't actually "sad" in any real sense, because it scores energy and mood independently rather than checking if the combination makes musical sense.
 
-No need for numeric metrics unless you created some.
+ecause: energy closeness (+0.85), valence closeness (+0.46), danceability closeness (+0.39)
+=== Adversarial - Energetic Sad ===
+Profile: {'genre': 'pop', 'mood': 'sad', 'energy': 0.9, 'valence': 0.2, 'danceability': 0.8}
+Gym Hero - Score: 3.65
+Because: genre match (+2.0), energy closeness (+0.97), valence closeness (+0.21), danceability closeness (+0.46)
+Sunrise City - Score: 3.60
+Because: genre match (+2.0), energy closeness (+0.92), valence closeness (+0.18), danceability closeness (+0.49)
+Storm Runner - Score: 1.78
+Because: energy closeness (+0.99), valence closeness (+0.36), danceability closeness (+0.43)
+Solar Flare - Score: 1.75
+Because: energy closeness (+1.0), valence closeness (+0.25), danceability closeness (+0.5)
+Iron Horizon - Score: 1.73
+Because: energy closeness (+0.95), valence closeness (+0.38), danceability closeness (+0.4)
 
 ---
 
