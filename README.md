@@ -17,17 +17,9 @@ Replace this paragraph with your own summary of what your version does.
 
 ## How The System Works
 
-Explain your design in plain language.
+Real platforms like Spotify use collaborative filtering (recommending based on what similar users liked) and content-based filtering (recommending based on a song's own attributes). This project builds a simplified content-based recommender. Each Song will have: genre, mood, energy, tempo_bpm, valence, danceability, acousticness. The UserProfile will store a favorite_genre, favorite_mood, and target values for energy, valence, and danceability. The recommender will score every song by rewarding genre/mood matches and rewarding numeric features that are close to the user's target, then rank all songs by score to return the top results.
 
-Some prompts to answer:
-
-- What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
-- What information does your `UserProfile` store
-- How does your `Recommender` compute a score for each song
-- How do you choose which songs to recommend
-
-You can include a simple diagram or bullet list if helpful.
+User Profile Critique: I asked my AI assistant whether this profile (favorite_genre=pop, favorite_mood=happy, target_energy=0.8, target_valence=0.8, target_danceability=0.8) could tell "intense rock" apart from "chill lofi." It can — energy alone separates them cleanly (rock ~0.91 vs lofi ~0.42 against a 0.8 target). But the critique surfaced a real weakness: because every numeric target is set high (0.8 across energy/valence/danceability), the profile can't tell "intense" apart from "happy" — a high-energy, low-valence song like angry rock scores almost as well as a genuinely happy pop song, because favorite_mood only helps when the song's mood string matches "happy" exactly, and both intense and chill songs fail that check equally. So the profile is fine at separating genres/moods far apart, but weak at distinguishing songs that are all high-energy but different in emotional tone. This is a good illustration of a filter bubble risk: without weighting valence more heavily, the system can conflate "energetic" with "positive."
 
 ---
 
